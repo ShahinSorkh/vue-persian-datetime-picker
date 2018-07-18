@@ -1,17 +1,6 @@
 @import 'variables';
 @import 'transitions';
-
-
-.clearfix{
-    &:after, &:before{
-        content: " ";
-        display: table;
-    }
-    &:after {
-        clear: both;
-    }
-}
-
+@import 'bootstrap';
 
 .#{$prefix}input-group{
     display: table;
