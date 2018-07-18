@@ -1,13 +1,11 @@
 <template>
     <span>
-        <span v-if="!element" :class="[prefix('input-group')]">
-            <label :for="id"
-                   :class="[prefix('icon-btn')]"
-                   @click.prevent.stop="visible=true"
-                   :style="{'background-color': color}">
+        <span v-if="!element" class="input-group">
+            <button class="btn btn-primary input-group-prepend"
+                   @click.prevent.stop="visible = true">
                 <icon v-if="type=='time'" name="clock"/>
                 <icon v-else name="calendar-alt"/>
-            </label>
+            </button>
             <input type="text"
                    :id="id"
                    :name="name"
@@ -16,138 +14,124 @@
                    :value="displayValue"
                    @focus="focus"
                    @blur="setOutput">
-            <input v-if="altName" type="hidden" :name="altName" :value="altFormatted"/>
+            <input v-if="altName" type="hidden" :name="altName" :value="altFormatted">
         </span>
 
-        <template v-else="">
+        <template v-else>
             <input v-if="altName" type="hidden" :name="altName" :value="altFormatted"/>
         </template>
 
         <transition name="fade-scale">
-            <div v-if="visible" :class="[prefix('wrapper')]" @click.self="wrapperClick" :data-type="type" ref="picker">
-                <div :class="[prefix('container')]">
-                    <div :class="[prefix('content')]">
-                        <div :class="[prefix('header')]" :style="{'background-color': color}">
-                            <div v-if="type == 'date' || type == 'datetime'"
-                                 :class="[prefix('year-label'), directionClass]"
-                                 @click="goStep('y')">
+            <div v-if="visible" class="modal" :class="{'d-block': visible}"
+                 @click.self="wrapperClick" tabindex="-1" :data-type="type" ref="picker" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div v-if="type == 'date' || type == 'datetime'" class="btn btn-secondary" @click="goStep('y')">
                                 <transition name="slideh">
-                                    <span :key="selectedDate.jYear()">
-                                        <span>{{ selectedDate.jYear() }}</span>
+                                    <span :key="selectedDate.jYear()">{{ selectedDate.jYear() }}</span>
+                                </transition>
+                            </div>
+                            <div v-show="formattedDate.length" class="btn btn-secondary disabled" :style="{'font-size': type == 'datetime' ? '22px' : ''}">
+                                <span :key="formattedDate">{{ formattedDate }}</span>
+                            </div>
+                        </div> <!-- .modal-header -->
+                        <div class="modal-body">
+
+                            <div class="container">
+                                <div class="row">
+                                    <span type="button" class="btn btn-light col-1" @click="nextMonth" :disabled="nextMonthDisabled">
+                                        <arrow fill="#000" direction="left" style="vertical-align: middle"></arrow>
                                     </span>
-                                </transition>
-                            </div>
-                            <div :class="[prefix('date'), directionClass]" :style="{'font-size': type=='datetime'? '22px':''}">
-                                <transition name="slideh">
-                                    <span :key="formattedDate">{{ formattedDate }}</span>
-                                </transition>
-                            </div>
-                        </div>
-                        <div :class="[prefix('body'), directionClassDate]">
-                            <template v-if="steps.indexOf('d') != -1">
-                                <div :class="[prefix('controls')]">
-                                    <button type="button" :class="[prefix('next')]" class="right-arrow-btn" @click="prevMonth" :disabled="prevMonthDisabled">
-                                        <arrow width="10" fill="#000" direction="right" style="vertical-align: middle"></arrow>
-                                    </button>
-                                    <button type="button" :class="[prefix('prev')]" class="left-arrow-btn" @click="nextMonth" :disabled="nextMonthDisabled">
-                                        <arrow width="10" fill="#000" direction="left" style="vertical-align: middle"></arrow>
-                                    </button>
-                                    <transition name="slidev">
-                                        <div :class="[prefix('month-label')]" @click="goStep('m')" :key="date.jMonth()">
-                                            <span :style="{'border-color': color, color: color}">{{ date.format('jMMMM jYYYY') }}</span>
-                                        </div>
-                                    </transition>
-                                </div>
-                                <div class="clearfix" :class="[prefix('month'), directionClassDate]">
-                                    <div class="clearfix" :class="[prefix('week')]">
-                                        <div v-for="day in weekDays" :class="[prefix('weekday')]">{{ day }}</div>
+                                    <div class="col-10 btn btn-light" @click="goStep('m')" :key="date.jMonth()">
+                                        <span :style="{'border-color': color, color: color}">{{ date.format('jMMMM jYYYY') }}</span>
                                     </div>
-                                    <div :class="[prefix('days')]" :style="{height: (month.length * 40) + 'px' }">
-                                        <transition name="slidev" :class="directionClassDate">
-                                            <div :key="date.jMonth()" >
-                                                <div v-for="m,i in month" class="clearfix">
-                                                    <div :class="[prefix('day'), {selected: day.selected, empty: day.date == null}]"
-                                                         v-for="day in m"
-                                                         @click="selectDay(day)"
-                                                         :disabled="day.disabled">
+                                    <span type="button" class="btn btn-light col-1" @click="prevMonth" :disabled="prevMonthDisabled">
+                                        <arrow fill="#000" direction="right" style="vertical-align: middle"></arrow>
+                                    </span>
+                                </div>
+
+                                <template v-if="steps.indexOf('d') != -1">
+                                    <div class="row">
+                                        <button v-for="day in weekDays" class="col btn btn-light disabled">{{ day }}</button>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div :key="date.jMonth()">
+                                                <div v-for="m,i in month" class="row">
+                                                    <button class="col btn btn-light" v-for="day in m" @click="selectDay(day)"
+                                                            :class="{active: day.selected, disabled: day.date == null}">
                                                         <template v-if="day.date != null">
-                                                            <span :class="[prefix('day-effect')]" :style="{'background-color': color}"></span>
-                                                            <span :class="[prefix('day-text')]">{{ day.formatted }}</span>
+                                                            <span :class="" :style="{'background-color': color}"></span>
+                                                            <span class="">{{ day.formatted }}</span>
                                                         </template>
-                                                    </div>
+                                                    </button>
                                                 </div>
                                             </div>
-                                        </transition>
+                                        </div>
                                     </div>
-                                </div>
-                            </template>
-                            <div v-else="" style="height:250px"></div>
+                                </template>
+                            </div>
 
                             <transition name="fade">
-                                <div v-if="steps.indexOf('y') != -1"
-                                     :class="[prefix('addon-list')]"
-                                     v-show="currentStep == 'y'"
-                                     ref="year">
+                                <div v-if="steps.indexOf('y') != -1" :class="[prefix('addon-list')]" v-show="currentStep == 'y'" ref="year">
                                     <div :class="[prefix('addon-list-content')]">
-                                        <div v-for="year in years"
-                                             :class="[prefix('addon-list-item'), {selected: year.selected }]"
-                                             :style="{color: year.selected?color:''}"
-                                             @click="selectYear(year.value)"
-                                        >{{ year.value }}</div>
+                                        <div v-for="year in years" :class="[prefix('addon-list-item'), {selected: year.selected }]"
+                                             :style="{color: year.selected?color:''}" @click="selectYear(year.value)">
+                                            {{ year.value }}
+                                        </div>
                                     </div>
                                 </div>
                             </transition>
 
                             <transition name="fade">
-                                <div v-if="steps.indexOf('m') != -1"
-                                     :class="[prefix('addon-list'), prefix('month-list'), {'can-close': steps.length>1 }]"
-                                     v-show="currentStep == 'm'"
-                                     ref="month">
+                                <div v-if="steps.indexOf('m') != -1" v-show="currentStep == 'm'" ref="month"
+                                     :class="[prefix('addon-list'), prefix('month-list'), {'can-close': steps.length>1 }]">
                                     <div :class="[prefix('addon-list-content')]">
-                                        <div v-for="month,i in months"
+                                        <div v-for="month,i in months" @click="selectMonth(month)" :disabled="month.disabled"
                                              :class="[prefix('addon-list-item'), {selected: date.jMonth() == month.jMonth() }]"
-                                             @click="selectMonth(month)"
-                                             :disabled="month.disabled"
-                                             :style="{color: date.jMonth() == month.jMonth()?color:''}"
-                                        >{{ month.format('jMMMM') }}</div>
+                                             :style="{color: date.jMonth() == month.jMonth()?color:''}">
+                                            {{ month.format('jMMMM') }}
+                                        </div>
                                     </div>
                                 </div>
                             </transition>
 
                             <transition name="fade">
-                                <div v-if="steps.indexOf('t') != -1"
-                                     :class="[prefix('addon-list'), prefix('time')]"
-                                     v-show="currentStep == 't'"
-                                     ref="time">
+                                <div v-if="steps.indexOf('t') != -1" :class="[prefix('addon-list'), prefix('time')]" v-show="currentStep == 't'" ref="time">
                                     <div :class="[prefix('addon-list-content')]">
                                         <div :class="[prefix('time-h'), classFastCounter]">
                                             <btn class="up-arrow-btn" @update="setTime(1, 'h')" @fastUpdate="fastUpdateCounter">
-                                                <arrow width="20" direction="up"></arrow>
+                                                <arrow direction="up"></arrow>
                                             </btn>
                                             <div class="counter" :class="directionClassTime" @mousewheel.stop.prevent="wheelSetTime('h',$event)">
                                                 <div class="counter-item" v-for="item, i in time.format('HH').split('')">
                                                     <transition name="slideh">
-                                                        <span :key="item + '_' + i" :style="{transition: 'all ' + timeData.transitionSpeed + 'ms ease-in-out'}">{{ item }}</span>
+                                                        <span :key="item + '_' + i" :style="{transition: `all ${timeData.transitionSpeed}ms ease-in-out`}">
+                                                            {{ item }}
+                                                        </span>
                                                     </transition>
                                                 </div>
                                             </div>
                                             <btn class="down-arrow-btn" @update="setTime(-1, 'h')" @fastUpdate="fastUpdateCounter">
-                                                <arrow width="20" direction="down"></arrow>
+                                                <arrow direction="down"></arrow>
                                             </btn>
                                         </div>
                                         <div :class="[prefix('time-m'), classFastCounter]">
                                             <btn class="up-arrow-btn" @update="setTime(1, 'm')" @fastUpdate="fastUpdateCounter">
-                                                <arrow width="20" direction="up"></arrow>
+                                                <arrow direction="up"></arrow>
                                             </btn>
                                             <div class="counter" :class="directionClassTime" @mousewheel.stop.prevent="wheelSetTime('m',$event)">
                                                 <div class="counter-item" v-for="item, i in time.format('mm').split('')">
                                                     <transition name="slideh">
-                                                        <span :key="item + '_' + i" :style="{transition: 'all ' + timeData.transitionSpeed + 'ms ease-in-out'}">{{ item }}</span>
+                                                        <span :key="item + '_' + i" :style="{transition: `all ${timeData.transitionSpeed}ms ease-in-out`}">
+                                                            {{ item }}
+                                                        </span>
                                                     </transition>
                                                 </div>
                                             </div>
                                             <btn class="down-arrow-btn" @update="setTime(-1, 'm')" @fastUpdate="fastUpdateCounter">
-                                                <arrow width="20" direction="down"></arrow>
+                                                <arrow direction="down"></arrow>
                                             </btn>
                                         </div>
                                     </div>
@@ -158,15 +142,17 @@
                                 <span class="close-addon" v-if="steps.length > 1 && (currentStep != 'd')" @click="goStep('d')">x</span>
                             </transition>
 
+                        </div> <!-- .modal-body -->
+                        <div class="modal-footer">
                             <div :class="[prefix('actions')]">
                                 <button type="button" @click="submit()" :style="{'color': color}">تایید</button>
                                 <button type="button" @click="visible=false" :style="{'color': color}">انصراف</button>
                                 <button type="button" @click="goToday()" :style="{'color': color}" v-if="canGoToday">اکنون</button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </div> <!-- .modal-content -->
+                </div> <!-- .modal-dialog -->
+            </div> <!-- .modal -->
         </transition>
     </span>
 </template>
@@ -904,3 +890,9 @@
         }
     }
 </script>
+
+<style>
+    .modal {
+        overflow: auto;
+    }
+</style>
