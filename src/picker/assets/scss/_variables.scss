@@ -1,6 +1,10 @@
 
-$prefix: p-datetime-picker-;
-$width: 316px;
+$vpd-prefix: vpd-;  //shorted to reduce the css size
+$vpd-width: 316px !default;
 
-$day-size: 40px;
-$month-label-height: 50px;
+$vpd-day-size: 40px !default;
+$vpd-month-label-height: 50px !default;
+
+$vpd-input-border-color: #dadada !default;
+
+$vpd-input-border: solid 1px $vpd-input-border-color !default;

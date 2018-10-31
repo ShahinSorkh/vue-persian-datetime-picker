@@ -18,6 +18,10 @@
 
         <display-format></display-format>
 
+        <disable-picker></disable-picker>
+
+        <disable-dates></disable-dates>
+
         <min-and-max></min-and-max>
 
         <with-value></with-value>
@@ -45,6 +49,10 @@
         <picker-color></picker-color>
 
         <append-to></append-to>
+
+        <with-label></with-label>
+
+        <highlight></highlight>
 
 
         <!--===== DateTime Picker =====-->
@@ -77,64 +85,71 @@
 </template>
 
 <script>
+    import InstallDocs from './components/InstallDocs.vue'
+import SimpleDate from './components/examples/SimpleDate.vue'
+import SimpleFormat from './components/examples/SimpleFormat.vue'
+import MinAndMax from './components/examples/MinAndMax.vue'
+import WithValue from './components/examples/WithValue.vue'
+import DifferentInputAnOutput from './components/examples/DifferentInputAnOutput.vue'
+import ViewProp from './components/examples/ViewProp.vue'
+import EditableInput from './components/examples/EditableInput.vue'
+import CustomInput from './components/examples/CustomInput.vue'
+import CustomInputAndEditable from './components/examples/CustomInputAndEditable.vue'
+import InputSettings from './components/examples/InputSettings.vue'
+import AltField from './components/examples/AltField.vue'
+import AutoSubmit from './components/examples/AutoSubmit.vue'
+import WrapperSubmit from './components/examples/WrapperSubmit.vue'
+import PickerColor from './components/examples/PickerColor.vue'
+import SimpleDatetime from './components/examples/SimpleDatetime.vue'
+import DatetimeMinAndMax from './components/examples/DatetimeMinAndMax.vue'
+import SimpleTime from './components/examples/SimpleTime.vue'
+import TimeMinAndMax from './components/examples/TimeMinAndMax.vue'
+import PropsDocs from './components/PropsDocs.vue'
+import EventsDocs from './components/EventsDocs.vue'
+import InitialValue from './components/examples/InitialValue.vue'
+import DisplayFormat from './components/examples/DisplayFormat.vue'
+import AppendTo from './components/examples/AppendTo.vue'
+import DisablePicker from './components/examples/DisablePicker.vue'
+import DisableDates from './components/examples/DisableDates.vue'
+import WithLabel from './components/examples/WithLabel.vue'
+import Highlight from './components/examples/Highlight.vue'
 
-    import InstallDocs from './components/InstallDocs.vue';
-    import SimpleDate from './components/examples/SimpleDate.vue';
-    import SimpleFormat from './components/examples/SimpleFormat.vue';
-    import MinAndMax from './components/examples/MinAndMax.vue';
-    import WithValue from './components/examples/WithValue.vue';
-    import DifferentInputAnOutput from './components/examples/DifferentInputAnOutput.vue';
-    import ViewProp from './components/examples/ViewProp.vue';
-    import EditableInput from './components/examples/EditableInput.vue';
-    import CustomInput from './components/examples/CustomInput.vue';
-    import CustomInputAndEditable from './components/examples/CustomInputAndEditable.vue';
-    import InputSettings from './components/examples/InputSettings.vue';
-    import AltField from './components/examples/AltField.vue';
-    import AutoSubmit from './components/examples/AutoSubmit.vue';
-    import WrapperSubmit from './components/examples/WrapperSubmit.vue';
-    import PickerColor from './components/examples/PickerColor.vue';
-    import SimpleDatetime from './components/examples/SimpleDatetime.vue';
-    import DatetimeMinAndMax from './components/examples/DatetimeMinAndMax.vue';
-    import SimpleTime from './components/examples/SimpleTime.vue';
-    import TimeMinAndMax from './components/examples/TimeMinAndMax.vue';
-    import PropsDocs from './components/PropsDocs.vue';
-    import EventsDocs from './components/EventsDocs.vue';
-    import InitialValue from './components/examples/InitialValue.vue';
-    import DisplayFormat from './components/examples/DisplayFormat.vue';
-    import AppendTo from './components/examples/AppendTo.vue'
-
-    export default {
-        name: 'app',
-        data() {
-            return {}
-        },
-        methods: {},
-        components: {
-            InstallDocs,
-            SimpleDate,
-            SimpleFormat,
-            MinAndMax,
-            WithValue,
-            DifferentInputAnOutput,
-            ViewProp,
-            EditableInput,
-            CustomInput,
-            CustomInputAndEditable,
-            InputSettings,
-            AltField,
-            AutoSubmit,
-            WrapperSubmit,
-            PickerColor,
-            SimpleDatetime,
-            DatetimeMinAndMax,
-            SimpleTime,
-            TimeMinAndMax,
-            PropsDocs,
-            EventsDocs,
-            InitialValue,
-            DisplayFormat,
-            AppendTo,
-        },
+export default {
+      name: 'app',
+      data () {
+        return {}
+      },
+      methods: {},
+      components: {
+        InstallDocs,
+        SimpleDate,
+        SimpleFormat,
+        MinAndMax,
+        WithValue,
+        DifferentInputAnOutput,
+        ViewProp,
+        EditableInput,
+        CustomInput,
+        CustomInputAndEditable,
+        InputSettings,
+        AltField,
+        AutoSubmit,
+        WrapperSubmit,
+        PickerColor,
+        SimpleDatetime,
+        DatetimeMinAndMax,
+        SimpleTime,
+        TimeMinAndMax,
+        PropsDocs,
+        EventsDocs,
+        InitialValue,
+        DisplayFormat,
+        AppendTo,
+        DisablePicker,
+        DisableDates,
+        WithLabel,
+        Highlight
+      }
     }
 </script>
 
@@ -167,14 +182,24 @@
         }
     }
 
-    .p-datetime-picker-wrapper, input{
+    .vpd-wrapper, input{
         font-family: IRANSans, Tahoma, sans-serif;
         font-size: 12px;
     }
 
-    .p-datetime-picker-input-group{
+    .vpd-input-group{
         max-width: 250px;
+        input {
+            border-left: none;
+            border-right: solid 1px #dadada;
+            border-radius: 0;
+        }
+        label svg + span {
+            margin-right: 0 !important;
+            margin-left: 4px;
+        }
     }
+    .form-control {  border-radius: 0;  }
 
     .card{
         margin-bottom: 30px;
@@ -202,6 +227,18 @@
 
     .card-title{
         text-align: center;
+    }
+    .card-version {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #417df4;
+        color: white;
+        padding: 10px 5px 0 0;
+        border-radius: 0 0 0 50px;
+        width: 50px;
+        height: 50px;
+        text-align: right;
     }
 
     input.is-editable{

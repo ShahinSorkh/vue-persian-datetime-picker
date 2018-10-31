@@ -1,5 +1,6 @@
 <template>
     <div class="card">
+        <span class="card-version" v-if="version">{{ version }}</span>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
@@ -24,17 +25,17 @@
 
 <script>
     export default {
-        props: ['title'],
-        data() {
-            return {
-                showDocs: false,
-            }
-        },
-        methods: {},
-        computed: {
-            hasDocs(){
-                return (this.$slots.docs && this.$slots.docs.length);
-            }
-        },
+      props: ['title', 'version'],
+      data () {
+        return {
+          showDocs: false
+        }
+      },
+      methods: {},
+      computed: {
+        hasDocs () {
+          return (this.$slots.docs && this.$slots.docs.length)
+        }
+      }
     }
 </script>
