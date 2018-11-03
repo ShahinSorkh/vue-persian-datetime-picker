@@ -1,5 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
+var UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+// TODO migrate to webpack 4
 
 module.exports = {
   entry: './src/main.js',
@@ -95,12 +97,7 @@ if (process.env.NODE_ENV === 'production') {
         NODE_ENV: '"production"'
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: false,
-      compress: {
-        warnings: false
-      }
-    }),
+    new UglifyJsPlugin(),
     new webpack.LoaderOptionsPlugin({
       minimize: true
     }),
@@ -129,13 +126,7 @@ if (process.env.NODE_ENV === 'export') {
         NODE_ENV: '"production"'
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: false,
-      mangle: true,
-      compress: {
-        warnings: false
-      }
-    }),
+    new UglifyJsPlugin(),
     new webpack.LoaderOptionsPlugin({
       minimize: true
     })
@@ -164,13 +155,7 @@ if (process.env.NODE_ENV === 'browser') {
         NODE_ENV: '"production"'
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: false,
-      mangle: true,
-      compress: {
-        warnings: false
-      }
-    }),
+    new UglifyJsPlugin(),
     new webpack.LoaderOptionsPlugin({
       minimize: true
     })

@@ -18,10 +18,10 @@
     "shamsi datepicker"
   ],
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --hot",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "export": "cross-env NODE_ENV=export webpack --progress --hide-modules",
-    "browser": "cross-env NODE_ENV=browser webpack --progress --hide-modules",
+    "dev": "./node_modules/.bin/cross-env NODE_ENV=development ./node_modules/.bin/webpack-dev-server --hot",
+    "build": "./node_modules/.bin/cross-env NODE_ENV=production ./node_modules/.bin/webpack --progress --hide-modules",
+    "export": "./node_modules/.bin/cross-env NODE_ENV=export ./node_modules/.bin/webpack --progress --hide-modules",
+    "browser": "./node_modules/.bin/cross-env NODE_ENV=browser ./node_modules/.bin/webpack --progress --hide-modules",
     "buildAll": "yarn build && yarn export && yarn browser"
   },
   "dependencies": {
@@ -49,6 +49,7 @@
     "highlight.js": "^9.12.0",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.6",
+    "uglifyjs-webpack-plugin": "^1.3.0",
     "vue": "^2.4.4",
     "vue-highlight.js": "^2.2.0",
     "vue-loader": "^13.0.5",
