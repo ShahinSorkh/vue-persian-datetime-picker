@@ -14,18 +14,19 @@
         padding: 0 10px;
         vertical-align: middle;
         color: #ffffff;
+        border-radius: 0 $vpd-input-border-radius $vpd-input-border-radius 0;
     }
     input {
         display: table-cell;
         border: $vpd-input-border;
-        border-top-right-radius: 0 ;
-        border-bottom-right-radius: 0 ;
+        border-radius: $vpd-input-border-radius 0 0 $vpd-input-border-radius;
         line-height: 30px;
         padding: 0 10px;
         &:not(.is-editable) {  cursor: pointer;  }
     }
     label {
-        color: white;
+        color: $vpd-btn-color;
+        background: $vpd-btn-bg;
         white-space: nowrap;
     }
     &.disabled {
@@ -63,9 +64,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+    z-index: $zindex-modal;
 }
 
 .#{$vpd-prefix}content {
@@ -75,16 +74,17 @@
     direction: rtl;
     width: $vpd-width;
 
-    background-color: #ffffff;
-    -webkit-box-shadow: 5px 22px 95px -14px rgba(0,0,0,1);
-    -moz-box-shadow: 5px 22px 95px -14px rgba(0,0,0,1);
-    box-shadow: 5px 22px 95px -14px rgba(0,0,0,1);
+    background-color: $modal-content-bg;
+    @include border-radius($modal-content-border-radius);
+    @include box-shadow($modal-content-box-shadow-xs);
     cursor: default;
 }
 
 .#{$vpd-prefix}header {
-    color: #ffffff;
-    padding: 10px 20px;
+    @include border-top-radius($modal-content-border-radius);
+    padding: $modal-header-padding;
+    background: $card-bg;
+    border-bottom: $modal-header-border-width solid $modal-header-border-color;
     position: relative;
     &.landscape {
         height: 374px;
@@ -94,6 +94,9 @@
 }
 
 .#{$vpd-prefix}body {
+    @include border-bottom-radius($modal-content-border-radius);
+    background-color: $card-bg;
+    color: $body-color;
     position: relative;
     .landscape {
         float: left;
@@ -182,20 +185,20 @@
 
     &[disabled] {
         cursor: default;
-        color: darken(#ffffff, 20%);
+        color: invert($body-color, 50%);
 
         .#{$vpd-prefix}day-effect {
             background-color: transparent;
         }
 
         .#{$vpd-prefix}day-text {
-            color: darken(#ffffff, 20%);
+            color: invert($body-color, 50%);
         }
     }
 
     &:not([disabled]) {
         &:hover {
-            color: #ffffff;
+            color: $body-color;
             .#{$vpd-prefix}day-effect {
                 transform: scale(1);
                 opacity: 0.6;
@@ -234,6 +237,7 @@
     height: $vpd-month-label-height;
     line-height: $vpd-month-label-height;
     text-align: center;
+    color: $body-color;
 
     button {
         position: relative;
@@ -266,6 +270,7 @@
 
 .#{$vpd-prefix}next,
 .#{$vpd-prefix}prev {
+    color: $body-color;
     width: $vpd-month-label-height;
     height: $vpd-month-label-height;
     line-height: $vpd-month-label-height;
@@ -353,7 +358,6 @@
     color: #8a8a8a;
     cursor: pointer;
     float: right;
-    border: solid 4px #fff;
     &.selected, &:hover {
         background-color: #f9f9f9;
     }
@@ -365,7 +369,8 @@
 
 .#{$vpd-prefix}addon-list {
     width: 100%;
-    background-color: #ffffff;
+    background-color: $card-bg;
+    color: $body-color;
     position: absolute;
     z-index: 2;
     overflow: auto;
@@ -383,16 +388,14 @@
             height: 44px;
             line-height: 36px;
             transition: all 0.3s ease;
-            color: #8a8a8a;
             cursor: pointer;
             float: right;
-            border: solid 4px #fff;
 
-            &.selected, &:hover { background-color: #f9f9f9; }
-            &.selected {
-                font-size: 17px;
-                background-color: #f5f5f5;
+            &.selected, &:hover {
+                color: invert($body-color, 10%);
+                background-color: invert($card-bg, 50%);
             }
+            &.selected { font-size: 17px; }
         }
     }
 
@@ -421,7 +424,7 @@
     }
 }
 
-.close-addon {
+.#{$vpd-prefix}close-addon {
     position: absolute;
     top: 4px;
     left: 4px;
@@ -429,11 +432,11 @@
     width: 30px;
     height: 30px;
     line-height: 30px;
-    color: #444;
+    color: $body-color;
     font-family: sans-serif;
     text-align: center;
     cursor: pointer;
-    background-color: rgba(0,0,0,0.1);
+    background-color: invert($card-bg, 50%);
 }
 
 .#{$vpd-prefix}month-list {
@@ -450,21 +453,6 @@
     opacity: 0.3;
     cursor: default !important;
     background-color: transparent !important;
-}
-
-.#{$vpd-prefix}close-addon {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    z-index: 2;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    color: #444;
-    font-family: sans-serif;
-    text-align: center;
-    cursor: pointer;
-    background-color: rgba(0,0,0,0.1);
 }
 
 .#{$vpd-prefix}time {
