@@ -216,6 +216,7 @@
 }
 
 .#{$vpd-prefix}day-effect {
+    background-color: invert($body-color, 50%);
     position: absolute;
     width: $vpd-day-size - 4px;
     height: $vpd-day-size - 4px;
@@ -338,7 +339,7 @@
         height: 36px;
         transition: all 0.3s ease;
 
-        &:hover { background-color: darken(#ffffff, 5%); }
+        &:hover { background-color: invert($body-color, 50%); }
         &[disabled] {
             opacity: 0.6;
             cursor: default;

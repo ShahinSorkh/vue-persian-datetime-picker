@@ -166,7 +166,7 @@
                                 <span :class="[prefix('close-addon')]" v-if="steps.length > 1 && (currentStep != 'd')" @click="goStep('d')">x</span>
                             </transition>
 
-                            <div :class="[prefix('actions')]">
+                            <div :class="['text-center', prefix('actions')]">
                                 <button type="button" @click="submit()" :disabled="!canSubmit">تایید</button>
                                 <button type="button" @click="visible=false">انصراف</button>
                                 <button type="button" @click="goToday()">اکنون</button>
