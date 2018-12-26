@@ -1,7 +1,7 @@
-
 import moment from 'moment-jalaali'
+import 'moment/locale/fa.js'
 
-moment.loadPersian({dialect: 'persian-modern'})
+moment.loadPersian({ dialect: 'persian-modern' })
 
 function addWeek (weekArray, week) {
   let emptyDays = 7 - week.length
@@ -13,7 +13,7 @@ function addWeek (weekArray, week) {
   weekArray.push(week)
 }
 
-function getWeekArray (d, firstDayOfWeek) {
+export function getWeekArray (d, firstDayOfWeek) {
   let daysInMonth = moment.jDaysInMonth(moment(d).jYear(), moment(d).jMonth())
 
   let dayArray = []
@@ -40,7 +40,7 @@ function getWeekArray (d, firstDayOfWeek) {
   return weekArray
 }
 
-function getYearsList (from = 1300, to = 1450, range = false, date) {
+export function getYearsList (from = 1300, to = 1450, range = false, date) {
   let years = []
   if (range) {
     let year = getYear(date)
@@ -56,15 +56,15 @@ function getYearsList (from = 1300, to = 1450, range = false, date) {
 // c = element to scroll to or top position in pixels
 // e = duration of the scroll in ms, time scrolling
 // d = (optative) ease function. Default easeOutCuaic
-function scrollTo (a, c, e, d) {
+export function scrollTo (a, c, e, d) {
   d || (d = easeOutCuaic); a = a || document.documentElement; if (a.scrollTop === 0) { var b = a.scrollTop; ++a.scrollTop; a = b + 1 === a.scrollTop-- ? a : document.body }b = a.scrollTop; e <= 0 || (typeof b === 'object' && (b = b.offsetTop), typeof c === 'object' && (c = c.offsetTop), (function (a, b, c, f, d, e, h) { function g () { f < 0 || f > 1 || d <= 0 ? a.scrollTop = c : (a.scrollTop = b - (b - c) * h(f), f += d * e, setTimeout(g, e)) }g() }(a, b, c, 0, 1 / e, 20, d)))
 }
 function easeOutCuaic (t) { t--; return t * t * t + 1 }
 
-function getMonthsList (minDate, maxDate, date) {
-  let list = [],
-    min = minDate ? minDate.clone().startOf('jMonth').unix() : -Infinity,
-    max = maxDate ? maxDate.clone().endOf('jMonth').unix() : Infinity
+export function getMonthsList (minDate, maxDate, date) {
+  let list = []
+  let min = minDate ? minDate.clone().startOf('jMonth').unix() : -Infinity
+  let max = maxDate ? maxDate.clone().endOf('jMonth').unix() : Infinity
   for (let i = 0; i < 12; i++) {
     let m = date.clone().jMonth(i)
     if (m.clone().startOf('jMonth').unix() < min || m.clone().endOf('jMonth').unix() > max) {
@@ -75,10 +75,4 @@ function getMonthsList (minDate, maxDate, date) {
   return list
 }
 
-export default {
-  getWeekArray,
-  getYearsList,
-  getMonthsList,
-  scrollTo,
-  moment
-}
+export { moment }
