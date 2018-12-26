@@ -520,11 +520,11 @@ export default {
       if (this.isLower(time)) time = this.minDate.clone()
       if (this.isMore(time)) time = this.maxDate.clone()
 
-      this.time = time
-
       let now = new Date().getTime()
       let def = now - this.timeData.lastUpdate
 
+      now = new Date().getTime()
+      def = now - this.timeData.lastUpdate
       if (def > 20 && def < 300) this.timeData.transitionSpeed = def
       this.timeData.lastUpdate = now
 
@@ -616,12 +616,8 @@ export default {
     setMinMax () {
       let min = this.getMoment(this.min)
       let max = this.getMoment(this.max)
-      if (this.min && min.isValid()) {
-        this.minDate = min
-      }
-      if (this.max && max.isValid()) {
-        this.maxDate = max
-      }
+      this.minDate = this.min && min.isValid() ? min : false
+      this.maxDate = this.max && max.isValid() ? max : false
     },
     getMoment (date) {
       let d
