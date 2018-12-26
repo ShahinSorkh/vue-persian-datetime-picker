@@ -529,18 +529,19 @@
     }
 }
 
-.responsive {
-    .#{$vpd-prefix}wrapper {
-        overflow: auto;
-        text-align: center;
-        .#{$vpd-prefix}container {
-            position: relative;
-            top: 0;
-            left: 0;
-            transform: none;
-            display: inline-block;
-            margin: 20px auto;
+@media screen and (max-height: 460px) {
+    .responsive {
+        .#{$prefix}wrapper {
+            overflow: auto;
+            text-align: center;
+            .#{$vpd-prefix}container {
+                position: relative;
+                top: 0;
+                left: 0;
+                transform: none;
+                display: inline-block;
+                margin: 20px auto;
+            }
         }
     }
 }
-
