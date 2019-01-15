@@ -36,12 +36,12 @@
 </template>
 
 <script>
-    export default {
-      data () {
-        return {
-          start: '',
-          end: ''
-        }
-      }
+export default {
+  data () {
+    return {
+      start: '',
+      end: ''
     }
+  }
+}
 </script>

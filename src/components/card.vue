@@ -24,18 +24,18 @@
 </template>
 
 <script>
-    export default {
-      props: ['title', 'version'],
-      data () {
-        return {
-          showDocs: false
-        }
-      },
-      methods: {},
-      computed: {
-        hasDocs () {
-          return (this.$slots.docs && this.$slots.docs.length)
-        }
-      }
+export default {
+  props: ['title', 'version'],
+  data () {
+    return {
+      showDocs: false
     }
+  },
+  methods: {},
+  computed: {
+    hasDocs () {
+      return (this.$slots.docs && this.$slots.docs.length)
+    }
+  }
+}
 </script>

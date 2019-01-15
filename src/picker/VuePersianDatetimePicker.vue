@@ -20,44 +20,72 @@
                    @focus="focus"
                    @blur="setOutput">
             <input v-if="altName" type="hidden" :name="altName" :value="altFormatted"/>
+
+            <i v-if="clearable && !disabled && displayValue"
+               :class="[prefix('clear-btn')]"
+               @click="clearValue"
+            >x</i>
         </span>
 
         <template v-else>
             <input v-if="altName" type="hidden" :name="altName" :value="altFormatted"/>
         </template>
 
-        <transition name="fade">
-            <div v-if="visible" :class="[prefix('wrapper')]" @click.self="wrapperClick" :data-type="type" ref="picker">
+        <transition name="fade-scale">
+            <div v-if="visible"
+                 :class="[
+                     prefix('wrapper'),
+                     prefix(`dir-${localeData.config.dir}`),
+                     inline ? prefix('is-inline'):'',
+                     autoSubmit && !hasStep('t') ? prefix('no-footer'):''
+                 ]"
+                 :data-type="type"
+                 @click.self="wrapperClick"
+                 ref="picker">
                 <div :class="[prefix('container')]">
                     <div :class="[prefix('content')]">
                         <div :class="[prefix('header')]">
                             <div v-if="type == 'date' || type == 'datetime'"
                                  :class="[prefix('year-label'), directionClass]"
                                  @click="goStep('y')">
-                                <transition name="slideh">
-                                    <span :key="selectedDate.jYear()">
-                                        <span>{{ selectedDate.jYear() }}</span>
+                                <transition name="slideY">
+                                    <span :key="selectedDate.xYear()">
+                                        <span>{{ selectedDate.xYear() }}</span>
                                     </span>
                                 </transition>
                             </div>
                             <div :class="[prefix('date'), directionClass]" :style="{'font-size': type=='datetime'? '22px':''}">
-                                <transition name="slideh">
+                                <transition name="slideY">
                                     <span :key="formattedDate">{{ formattedDate }}</span>
                                 </transition>
                             </div>
+                            <ul v-if="locales.length > 1" :class="[prefix('locales')]">
+                                <li v-for="locale in locales"
+                                    :class="{active: locale === localeData.name}"
+                                    @click="setLocale(locale)"
+                                >{{ locale }}</li>
+                            </ul>
                         </div>
-                        <div :class="[prefix('body'), directionClassDate]">
+                        <div :class="[prefix('body')]">
                             <template v-if="steps.indexOf('d') != -1">
-                                <div :class="[prefix('controls')]">
-                                    <button type="button" :class="[prefix('next')]" class="right-arrow-btn" @click="prevMonth" :disabled="prevMonthDisabled">
-                                        <icon name="arrow-right"/>
+                                <div :class="[prefix('controls'), directionClassDate]">
+                                    <button type="button"
+                                            :class="[prefix('next')]"
+                                            :title="lang.nextMonth"
+                                            :disabled="nextMonthDisabled"
+                                            @click="nextMonth">
+                                        <arrow width="10" fill="#000" direction="right" style="vertical-align: middle"></arrow>
                                     </button>
-                                    <button type="button" :class="[prefix('prev')]" class="left-arrow-btn" @click="nextMonth" :disabled="nextMonthDisabled">
-                                        <icon name="arrow-left"/>
+                                    <button type="button"
+                                            :class="[prefix('prev')]"
+                                            :title="lang.prevMonth"
+                                            :disabled="prevMonthDisabled"
+                                            @click="prevMonth">
+                                        <arrow width="10" fill="#000" direction="left" style="vertical-align: middle"></arrow>
                                     </button>
-                                    <transition name="slidev">
-                                        <div :class="[prefix('month-label')]" @click="goStep('m')" :key="date.jMonth()">
-                                            <span>{{ date.format('jMMMM jYYYY') }}</span>
+                                    <transition name="slideX">
+                                        <div :class="[prefix('month-label')]" :key="date.xMonth()" @click="goStep('m')">
+                                            <span :style="{'border-color': color, color: color}">{{ date.xFormat('jMMMM jYYYY') }}</span>
                                         </div>
                                     </transition>
                                 </div>
@@ -67,8 +95,8 @@
                                     </div>
 
                                     <div :class="[prefix('days')]" :style="{height: (month.length * 40) + 'px' }">
-                                        <transition name="slidev" :class="directionClassDate">
-                                            <div :key="date.jMonth()" >
+                                        <transition name="slideX" :class="directionClassDate">
+                                            <div :key="date.xMonth()" >
                                                 <div v-for="m,i in month" class="clearfix">
                                                     <div :class="[prefix('day'), {selected: day.selected, empty: day.date == null}, day.attributes.class]"
                                                          v-for="day in m"
@@ -90,7 +118,7 @@
 
                             <transition name="fade">
                                 <div v-if="steps.indexOf('y') != -1"
-                                     :class="[prefix('addon-list')]"
+                                     :class="[prefix('addon-list'), {'can-close': steps.length > 1}]"
                                      v-show="currentStep == 'y'"
                                      ref="year">
                                     <div :class="[prefix('addon-list-content')]">
@@ -100,30 +128,30 @@
                                              :style="[year.attributes.style]"
                                              :disabled="year.disabled"
                                              @click="selectYear(year)"
-                                        >{{ year.value }}</div>
+                                        >{{ year.xFormat('jYYYY') }}</div>
                                     </div>
                                 </div>
                             </transition>
 
                             <transition name="fade">
-                                <div v-if="steps.indexOf('m') != -1"
-                                     :class="[prefix('addon-list'), prefix('month-list'), {'can-close': steps.length>1 }]"
+                                <div v-if="hasStep('m')"
+                                     :class="[prefix('addon-list'), prefix('month-list'), {'can-close': steps.length > 1}]"
                                      v-show="currentStep == 'm'"
                                      ref="month">
                                     <div :class="[prefix('addon-list-content')]">
                                         <div v-for="month,i in months"
                                              v-bind="month.attributes"
                                              @click="selectMonth(month)"
-                                             :class="[prefix('addon-list-item'), { selected: date.jMonth() == month.jMonth() }, month.attributes.class]"
+                                             :class="[prefix('addon-list-item'), {selected: month.selected }, month.attributes.class]"
                                              :disabled="month.disabled"
-                                             :style="[month.attributes.style]"
-                                        >{{ month.format('jMMMM') }}</div>
+                                             :style="[{color: month.selected?color:''}, month.attributes.style]"
+                                        >{{ month.xFormat('jMMMM') }}</div>
                                     </div>
                                 </div>
                             </transition>
 
                             <transition name="fade">
-                                <div v-if="steps.indexOf('t') != -1"
+                                <div v-if="hasStep('t')"
                                      :class="[prefix('addon-list'), prefix('time'), {disabled: isDisableTime}]"
                                      v-show="currentStep == 't'"
                                      ref="time">
@@ -133,8 +161,8 @@
                                                 <arrow width="20" direction="up"></arrow>
                                             </btn>
                                             <div class="counter" :class="directionClassTime" @mousewheel.stop.prevent="wheelSetTime('h',$event)">
-                                                <div class="counter-item" v-for="item,i in time.format('HH').split('')" v-bind="timeAttributes">
-                                                    <transition name="slideh">
+                                                <div class="counter-item" v-for="item, i in time.format('HH').split('')" v-bind="timeAttributes">
+                                                    <transition name="slideY">
                                                         <span :key="item + '_' + i" :style="{transition: 'all ' + timeData.transitionSpeed + 'ms ease-in-out'}">{{ item }}</span>
                                                     </transition>
                                                 </div>
@@ -148,8 +176,8 @@
                                                 <arrow width="20" direction="up"></arrow>
                                             </btn>
                                             <div class="counter" :class="directionClassTime" @mousewheel.stop.prevent="wheelSetTime('m',$event)">
-                                                <div class="counter-item" v-for="item,i in time.format('mm').split('')" v-bind="timeAttributes">
-                                                    <transition name="slideh">
+                                                <div class="counter-item" v-for="item, i in time.format('mm').split('')" v-bind="timeAttributes">
+                                                    <transition name="slideY">
                                                         <span :key="item + '_' + i" :style="{transition: 'all ' + timeData.transitionSpeed + 'ms ease-in-out'}">{{ item }}</span>
                                                     </transition>
                                                 </div>
@@ -166,10 +194,26 @@
                                 <span :class="[prefix('close-addon')]" v-if="steps.length > 1 && (currentStep != 'd')" @click="goStep('d')">x</span>
                             </transition>
 
-                            <div :class="['text-center', prefix('actions')]">
-                                <button type="button" @click="submit()" :disabled="!canSubmit">تایید</button>
-                                <button type="button" @click="visible=false">انصراف</button>
-                                <button type="button" @click="goToday()" v-if="canGoToday">اکنون</button>
+                            <br v-if="autoSubmit && !hasStep('t')">
+
+                            <div :class="[prefix('actions')]" v-else>
+                                <button type="button"
+                                        @click="submit()"
+                                        :disabled="!canSubmit"
+                                        :style="{'color': color}"
+                                >{{ lang.submit }}</button>
+
+                                <button v-if="!inline"
+                                        type="button"
+                                        @click="visible=false"
+                                        :style="{'color': color}"
+                                >{{ lang.cancel }}</button>
+
+                                <button type="button"
+                                        @click="goToday()"
+                                        :style="{'color': color}"
+                                        v-if="canGoToday"
+                                >{{ lang.now }}</button>
                             </div>
                         </div>
                     </div>
@@ -185,6 +229,7 @@ import utils from './modules/utils'
 import Arrow from './components/Arrow.vue'
 import Btn from './components/Btn.vue'
 import Icon from 'vue-awesome/components/Icon'
+import CoreModule from './modules/core'
 
 /*
    * Use Vue Awesome
@@ -195,7 +240,6 @@ import 'vue-awesome/icons/arrow-right'
 import 'vue-awesome/icons/arrow-left'
 
 export default {
-  moment: utils.moment,
   model: {
     prop: 'value',
     event: 'input'
@@ -420,11 +464,80 @@ export default {
        * @desc This prop accepts only function that return an object of attributes.
        * @version 1.1.5
        */
-    highlight: { type: Function, 'default': null }
+    highlight: { type: Function, 'default': null },
+
+    /**
+             * Change minutes by step
+             * @type Number
+             * @default 1
+             * @version: 1.1.6
+             */
+    jumpMinute: { type: Number, 'default': 1 },
+
+    /**
+             * Round minutes when jumpMinute is grater than 1
+             * @example when jumpMinute = 15 thin will result: 13:00, 13:15, 13:30, 13:45 ...
+             * @type Boolean
+             * @default false
+             * @version: 1.1.6
+             */
+    roundMinute: { type: Boolean, 'default': false },
+
+    /**
+             * Show clear button
+             * @type Boolean
+             * @default false
+             * @version 1.1.6
+             */
+    clearable: { type: Boolean, 'default': false },
+
+    /**
+             * Inline mode
+             * @type Boolean
+             * @default false
+             * @version 1.1.6
+             */
+    inline: { type: Boolean, 'default': false },
+
+    /**
+             * Locales config ("fa" for jalali and "en" for gregorian)
+             * @type String
+             * @default fa
+             * @example fa | en | fa,en | en,fa
+             * @supported fa,en
+             * @version 2.0.0
+             */
+    locale: { type: String, 'default': 'fa' },
+
+    /**
+             * Locale configuration
+             * @type Object
+             * @default {}
+             * @version 2.0.0
+             * @example
+             * {
+             *  fa: {
+             *      dow: 6,             --first day of week
+             *      dir: 'rtl',         --language direction
+             *      lang: {
+             *           submit:    "تایید",
+             *           cancel:    "انصراف",
+             *           now:       "اکنون",
+             *           nextMonth: "ماه بعد",
+             *           prevMonth: "ماه قبل",
+             *      }
+             *  },
+             *  en: { ... }
+             * }
+             */
+    localeConfig: { type: Object, 'default': () => ({}) }
+
   },
   data () {
+    let coreModule = new CoreModule('fa')
     return {
-      now: utils.moment(),
+      core: coreModule,
+      now: coreModule.moment(),
       date: {},
       selectedDate: {},
       visible: false,
@@ -432,7 +545,6 @@ export default {
       directionClassDate: '',
       directionClassTime: '',
       classFastCounter: '',
-      weekDays: ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'],
       steps: ['y', 'm', 'd', 't'],
       step: 0,
       shortCodes: {
@@ -449,13 +561,16 @@ export default {
       },
       minDate: false,
       maxDate: false,
-      output: ''
+      output: '',
+      updateNowInterval: null,
+      locales: ['fa'],
+      localeData: coreModule.locale
     }
   },
   methods: {
     nextStep () {
       if (this.steps.length <= this.step + 1) {
-        return this.autoSubmit ? this.submit() : ''
+        return (this.autoSubmit || this.inline) ? this.submit() : ''
       } else {
         this.step++
         this.goStep(this.step)
@@ -484,11 +599,15 @@ export default {
       if (!e) this.transitionSpeed = 300
       this.classFastCounter = e ? 'fast-updating' : ''
     },
-    nextMonth () { this.date = this.date.clone().add(1, 'jMonth') },
-    prevMonth () { this.date = this.date.clone().add(-1, 'jMonth') },
+    nextMonth () {
+      this.date = this.date.clone().xAdd(1, 'month')
+    },
+    prevMonth () {
+      this.date = this.date.clone().xAdd(-1, 'month')
+    },
     selectDay (day) {
       if (!day.date || day.disabled) return
-      let d = utils.moment(day.date)
+      let d = this.core.moment(day.date)
       let s = this.selectedDate
       d.set({ hour: s.hour(), minute: s.minute(), second: 0 })
       this.date = d.clone()
@@ -498,18 +617,24 @@ export default {
     },
     selectYear (year) {
       if (year.disabled) return
-      this.date.jYear(year.value)
+      this.date = this.date.clone().xYear(year.xYear())
       this.nextStep()
     },
     selectMonth (month) {
       if (month.disabled) return
-      this.date.jMonth(month.jMonth())
+      this.date = this.date.clone().xMonth(month.xMonth())
       this.nextStep()
     },
     setTime (v, k) {
       let time = this.time.clone()
 
-      time.add({ [k]: v })
+      if (this.type === 'time' && k === 'm' && this.roundMinute) {
+        let x = v - (time.minute() % v)
+        time.add({ [k]: x })
+      } else {
+        time.add({ [k]: v })
+      }
+
       if (this.type !== 'time') {
         let date = this.date.clone()
         time.set({ year: date.year(), month: date.month(), date: date.date() })
@@ -520,11 +645,9 @@ export default {
       if (this.isLower(time)) time = this.minDate.clone()
       if (this.isMore(time)) time = this.maxDate.clone()
 
-      let now = new Date().getTime()
-      let def = now - this.timeData.lastUpdate
+      this.time = time
 
-      now = new Date().getTime()
-      def = now - this.timeData.lastUpdate
+      let now = new Date().getTime(); let def = now - this.timeData.lastUpdate
       if (def > 20 && def < 300) this.timeData.transitionSpeed = def
       this.timeData.lastUpdate = now
 
@@ -534,13 +657,13 @@ export default {
       }, 300)
     },
     wheelSetTime (k, e) {
-      this.setTime(e.wheelDeltaY > 0 ? 1 : -1, k)
+      this.setTime(e.wheelDeltaY > 0 ? this.jumpMinute : -this.jumpMinute, k)
     },
     submit () {
       if (this.hasStep('t')) {
         let t = { hour: this.time.hour(), minute: this.time.minute() }
-        this.date.set(t)
-        this.selectedDate.set(t)
+        this.date = this.date.set(t).clone()
+        this.selectedDate = this.selectedDate.set(t).clone()
       }
 
       if (['year', 'month'].indexOf(this.type) !== -1) this.selectedDate = this.date.clone()
@@ -551,9 +674,9 @@ export default {
       this.$emit('change', this.selectedDate.clone())
     },
     updateDates (d) {
-      if (typeof d !== 'object') d = this.getMoment(d || (this.value || this.initialValue))
+      if (d === null || typeof d !== 'object') { d = this.getMoment(d || (this.value || this.initialValue)) }
 
-      this.date = d.isValid() ? d : utils.moment()
+      this.date = d.isValid() ? d : this.core.moment()
 
       if (!this.hasStep('t')) this.date.set({ hour: 0, minute: 0, second: 0 })
 
@@ -566,6 +689,11 @@ export default {
       this.selectedDate = this.date.clone()
       this.time = this.date.clone()
 
+      if (this.type === 'time' && this.roundMinute) {
+        let x = (this.jumpMinute - (this.time.minute() % this.jumpMinute)) % this.jumpMinute
+        this.time.add({ 'm': x })
+      }
+
       if (this.value !== '' && this.value !== null && this.value.length !== 0) {
         this.output = this.selectedDate.clone()
       } else {
@@ -574,7 +702,7 @@ export default {
       }
     },
     goToday () {
-      let now = utils.moment()
+      let now = this.core.moment()
       if (!this.hasStep('t')) now.set({ hour: 0, minute: 0, second: 0 })
       this.date = now.clone()
       this.time = now.clone()
@@ -620,18 +748,26 @@ export default {
       this.maxDate = this.max && max.isValid() ? max : false
     },
     getMoment (date) {
-      let d
+      let d; let moment = this.core.moment
       if (this.selfInputFormat === 'x' || this.selfInputFormat === 'unix') {
-        d = utils.moment(date.toString().length === 10 ? date * 1000 : date * 1)
+        d = moment(date.toString().length === 10 ? date * 1000 : date * 1)
       } else {
         try {
           if (date) {
-            let a = utils.moment(date, this.selfInputFormat)
-            let b = utils.moment(date, this.selfFormat)
-
+            let a = moment(date, this.selfInputFormat)
+            let b = moment(date, this.selfFormat)
+            let now = moment()
+            let year = now.xYear()
             if (this.type === 'month') {
-              a.year(new Date().getFullYear())
-              b.year(new Date().getFullYear())
+              a.xYear(year)
+              b.xYear(year)
+            } else if (this.type === 'time') {
+              a = now.clone().set({
+                h: a.hour(),
+                m: a.minute(),
+                s: 0
+              })
+              b = a.clone()
             }
             if (a.year() !== b.year() && a.year() < 1900) {
               d = b.clone()
@@ -639,10 +775,10 @@ export default {
               d = a.clone()
             }
           } else {
-            d = utils.moment()
+            d = moment()
           }
         } catch (er) {
-          d = utils.moment()
+          d = moment()
         }
       }
       return d
@@ -669,7 +805,7 @@ export default {
       this.output = null
       if (val) {
         try {
-          this.output = utils.moment(val, this.displayFormat || this.selfFormat)
+          this.output = this.core.moment(val, this.displayFormat || this.selfFormat)
           if (!this.output.isValid()) this.output = null
         } catch (er) {}
       }
@@ -731,17 +867,32 @@ export default {
         return false
       }
 
-      if (item === 'y') value = utils.moment(value, 'jYYYY')
+      if (item === 'y') value = this.core.moment(value, 'jYYYY')
       return check(value, value.format(this.selfFormat))
     },
     getHighlights (item, value) {
       let highlight = this.highlight
       if (!highlight || typeof highlight !== 'function') return {}
-      if (item === 'y') value = utils.moment(value, 'jYYYY')
+      if (item === 'y') value = this.core.moment(value, 'jYYYY')
       return this.applyDevFn(highlight, item, value.format(this.selfFormat), value.clone()) || {}
     },
-    isLower (date) { return this.minDate && date.unix() < this.minDate.unix() },
-    isMore (date) { return this.maxDate && date.unix() > this.maxDate.unix() }
+    isLower (date) {
+      return this.minDate && date.unix() < this.minDate.unix()
+    },
+    isMore (date) {
+      return this.maxDate && date.unix() > this.maxDate.unix()
+    },
+    clearValue () {
+      if (this.disabled) return
+      this.$emit('input', '')
+      this.$emit('change', null)
+    },
+    setLocale (locale) {
+      this.core.changeLocale(locale, this.localeConfig)
+      this.date = this.date.clone()
+      this.selectedDate = this.selectedDate.clone()
+      this.$forceUpdate()
+    }
   },
   computed: {
     id () {
@@ -751,7 +902,7 @@ export default {
       let input = false
       if (this.value !== '' && this.value !== null && this.value.length !== 0) {
         try {
-          input = utils.moment(this.value, this.selfFormat)
+          input = this.core.moment(this.value, this.selfFormat)
         } catch (er) {
           input = false
         }
@@ -768,11 +919,11 @@ export default {
       if (t.indexOf('m') !== -1) { f += ' jMMMM ' }
       if (t.indexOf('d') !== -1) { f = 'ddd jDD jMMMM' }
       if (t.indexOf('t') !== -1) { f += ' HH:mm ' }
-      return f ? this.selectedDate.format(f) : ''
+      return f ? this.selectedDate.xFormat(f) : ''
     },
     month () {
       if (!this.hasStep('d')) return []
-      let m = utils.getWeekArray(this.date.clone().set({ hour: 0, minute: 0, second: 0 }), 6)
+      let m = this.core.getWeekArray(this.date.clone().startOf('day'))
       let data = []
       let selected = false
       let min = this.minDate ? this.minDate.clone().startOf('day').unix() : -Infinity
@@ -781,10 +932,10 @@ export default {
         let week = []
         w.forEach(d => {
           let sel = (d === null || selected) ? false : !this.selectedDate.diff(d, 'days')
-          let m = utils.moment(d)
+          let m = this.core.moment(d)
           week.push({
             date: d,
-            formatted: d === null ? '' : m.jDate(),
+            formatted: d === null ? '' : m.xDate(),
             selected: sel,
             disabled: (
               (this.minDate && m.clone().startOf('day').unix() < min) ||
@@ -801,39 +952,24 @@ export default {
     },
     years () {
       if (!this.hasStep('y') || this.currentStep !== 'y') return []
-
-      let min = this.minDate ? this.minDate.jYear() : 1300
-      let max = this.maxDate ? this.maxDate.jYear() : 1430
-
-      let y = utils.getYearsList(min, max).reverse()
-      let years = []
-      let selectedFound = false
-      let cy = this.date.jYear()
-
-      y.forEach(item => {
-        let obj = {
-          value: item,
-          selected: false,
-          disabled: this.checkDisable('y', item),
-          attributes: this.getHighlights('y', item)
-        }
-        if (!selectedFound && cy === item) {
-          obj.selected = true
-          selectedFound = true
-        }
-        years.push(obj)
+      let moment = this.core.moment
+      let min = this.minDate ? this.minDate.xYear() : moment('1300', 'jYYYY').xYear()
+      let max = this.maxDate ? this.maxDate.xYear() : moment('1430', 'jYYYY').xYear()
+      let cy = this.date.xYear()
+      return this.core.getYearsList(min, max).reverse().map(item => {
+        let year = moment().xYear(item)
+        year.selected = cy === item
+        year.disabled = this.checkDisable('y', item)
+        year.attributes = this.getHighlights('y', item)
+        return year
       })
-      return years
     },
     months () {
       if (this.hasStep('m')) {
-        let date = this.date.clone().jDate(1).set({
-          hour: 0,
-          minute: 0,
-          second: 0
-        })
-        let months = utils.getMonthsList(this.minDate, this.maxDate, date)
+        let date = this.date.clone().xStartOf('month')
+        let months = this.core.getMonthsList(this.minDate, this.maxDate, date)
         months.forEach(m => {
+          m.selected = this.date.xMonth() === m.xMonth()
           m.disabled = m.disabled || this.checkDisable('m', m)
           m.attributes = this.getHighlights('m', m)
         })
@@ -845,19 +981,18 @@ export default {
       return (
         this.hasStep('d') &&
                   this.minDate &&
-                  this.minDate.clone().startOf('jMonth').unix() >= this.date.clone().startOf('jMonth').unix()
+                    this.minDate.clone().xStartOf('month').unix() >= this.date.clone().xStartOf('month').unix()
       )
     },
     nextMonthDisabled () {
       return (
         this.hasStep('d') &&
                   this.maxDate &&
-                  this.maxDate.clone().startOf('jMonth').unix() <= this.date.clone().startOf('jMonth').unix()
+                    this.maxDate.clone().xStartOf('month').unix() <= this.date.clone().xStartOf('month').unix()
       )
     },
     canGoToday () {
       if (!this.minDate && !this.maxDate) return true
-
       let now = this.now.unix()
       let min = this.minDate && this.minDate.unix() <= now
       let max = this.maxDate && now <= this.maxDate.unix()
@@ -908,10 +1043,18 @@ export default {
       return (this.inputFormat === '' || this.inputFormat === undefined) ? this.selfFormat : this.inputFormat
     },
     outputValue () {
-      return this.output ? this.output.clone().format(this.selfFormat) : ''
+      if (!this.output) return ''
+      let output = this.output.clone()
+      let format = this.selfFormat
+      if (/j\w/.test(format)) output.locale('fa')
+      return output.format(format)
     },
     displayValue () {
-      return this.output ? this.output.clone().format(this.displayFormat || this.selfFormat) : ''
+      if (!this.output) return ''
+      let output = this.output.clone()
+      let format = this.displayFormat || this.selfFormat
+      if (/j\w/.test(format)) output.locale('fa')
+      return output.format(format)
     },
     isDisableTime () {
       return (this.hasStep('t') && this.checkDisable('t', this.time))
@@ -925,6 +1068,15 @@ export default {
       if (this.hasStep('t')) can = !this.isDisableTime
       if (can && this.type !== 'time') can = !this.checkDisable('d', this.date)
       return can
+    },
+    weekDays () {
+      let names = [...(this.core.moment().localeData().weekdaysMin())]
+      let dow = this.core.locale.config.dow
+      while (dow > 0) {
+        names.push(names.shift())
+        dow--
+      }
+      return names
     }
   },
   created () {
@@ -943,8 +1095,7 @@ export default {
       }
       let live = (selector, event, callback, context) => {
         addEvent(context || document, event, function (e) {
-          let found
-          let el = e.target || e.srcElement
+          let found; let el = e.target || e.srcElement
           while (el && !(found = el.id === selector)) el = el.parentElement
           if (found) callback.call(el, e)
         })
@@ -954,10 +1105,28 @@ export default {
       }
     })
     document.body.addEventListener('keydown', e => {
+      e = e || event
       if (e.keyCode === 9 && this.visible) this.visible = false
     })
   },
   watch: {
+    type: { handler: 'setType', immediate: true },
+    view: { handler: 'setView', immediate: true },
+    value: { handler: 'updateDates', immediate: true },
+    min: { handler: 'setMinMax', immediate: true },
+    max: { handler: 'setMinMax', immediate: true },
+    inline: {
+      handler (val) {
+        if (!this.disabled) this.visible = !!val
+      },
+      immediate: true
+    },
+    disabled: {
+      handler (val) {
+        if (val) { this.visible = false } else if (this.inline) { this.visible = true }
+      },
+      immediate: true
+    },
     selectedDate (val, old) {
       this.setDirection('directionClass', val, old)
     },
@@ -970,11 +1139,6 @@ export default {
     time (val, old) {
       this.setDirection('directionClassTime', val, old)
     },
-    type () { this.setType() },
-    view () { this.setView() },
-    value () { this.updateDates() },
-    min () { this.setMinMax() },
-    max () { this.setMinMax() },
     visible (val) {
       if (val) {
         if (this.disabled) {
@@ -996,14 +1160,37 @@ export default {
         this.checkScroll()
         this.$emit('open', this)
       } else {
+        if (this.inline && !this.disabled) {
+          this.visible = true
+          return
+        }
         this.$emit('close', this)
       }
     },
     show (val) {
       this.visible = val
-    }
+    },
+    locale: {
+      handler (val) {
+        let allowedLocales = ['fa', 'en']
+        let locales = val.toString().split(',').filter(i => allowedLocales.indexOf(i) !== -1)
+        this.locales = locales.length ? locales : ['fa']
+        this.setLocale(this.locales[0])
+      },
+      immediate: true
+    },
+    localeConfig: {
+      handler () {
+        this.setLocale(this.locales[0])
+      },
+      deep: true
+    },
+    'localeData.name': 'setMinMax'
   },
   components: { Arrow, Btn, Icon },
+  beforeDestroy () {
+    window.clearInterval(this.updateNowInterval)
+  },
   install (Vue, options) {
     let component = this
     options = Vue.util.extend({

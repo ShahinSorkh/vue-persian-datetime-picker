@@ -16,11 +16,11 @@
 </template>
 
 <script>
-    export default {
-      data () {
-        return {
-          datetime: ''
-        }
-      }
+export default {
+  data () {
+    return {
+      datetime: ''
     }
+  }
+}
 </script>

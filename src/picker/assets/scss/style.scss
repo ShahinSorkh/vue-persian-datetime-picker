@@ -545,3 +545,64 @@
         }
     }
 }
+
+.#{$vpd-prefix}wrapper {
+    overflow: auto;
+    text-align: center;
+    .#{$vpd-prefix}container {
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        display: inline-block;
+        margin: 20px auto;
+    }
+}
+}
+
+.#{$vpd-prefix}locales {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    left: 14px;
+    top: 12px;
+    line-height: 24px;
+    width: 30px;
+    text-align: center;
+    opacity: 0.7;
+    li {
+        cursor: pointer;
+        text-transform: uppercase;
+        &.active {
+            display: none;
+        }
+    }
+}
+
+.#{$vpd-prefix}dir-ltr {
+
+    .#{$vpd-prefix}content,
+    .#{$vpd-prefix}actions,
+    .#{$vpd-prefix}addon-list-content {
+        direction: ltr;
+    }
+
+    .#{$vpd-prefix}content,
+    .#{$vpd-prefix}actions {
+        text-align: left;
+        font-family: sans-serif;
+    }
+    .#{$vpd-prefix}month-label {  font-size: 90%  }
+
+    .#{$vpd-prefix}addon-list-item,
+    .#{$vpd-prefix}weekday,
+    .#{$vpd-prefix}day {
+        float: left;
+    }
+
+    .#{$vpd-prefix}locales {
+        left: auto;
+        right: 14px;
+    }
+}

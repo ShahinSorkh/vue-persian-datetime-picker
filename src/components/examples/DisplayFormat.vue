@@ -1,6 +1,6 @@
 <template>
     <card title="Format only for display" version="1.1.1">
-        
+
         <div style="max-width: 250px">
             <input type="text" v-model="name" placeholder="Name" class="form-control mb-2">
             <input type="tel" v-model="tel" placeholder="Tel" class="form-control mb-2">
@@ -14,7 +14,6 @@
         </div>
 
         <p class="text-muted- mt-5">With this option, you can use the <b>gregorian</b> in backend, while the user will only see the <b>jalali</b> date</p>
-
 
         <template slot="code">
             <highlight-code lang="html">
@@ -45,13 +44,13 @@
 </template>
 
 <script>
-    export default {
-      data () {
-        return {
-          name: '',
-          tel: '',
-          birthday: ''
-        }
-      }
+export default {
+  data () {
+    return {
+      name: '',
+      tel: '',
+      birthday: ''
     }
+  }
+}
 </script>

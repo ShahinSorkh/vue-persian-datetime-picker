@@ -197,7 +197,6 @@
                  */
                 appendTo: 'body',
 
-
                 /**
                  * Disable or enable the datepicker
                  * @type Boolean

@@ -43,15 +43,15 @@
 </template>
 
 <script>
-    export default {
-      data () {
-        return {
-          date: '',
-          time: '',
-          datetime: '',
-          year: '',
-          month: ''
-        }
-      }
+export default {
+  data () {
+    return {
+      date: '',
+      time: '',
+      datetime: '',
+      year: '',
+      month: ''
     }
+  }
+}
 </script>

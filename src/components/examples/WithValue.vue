@@ -43,11 +43,11 @@
 </template>
 
 <script>
-    export default {
-      data () {
-        return {
-          date: '1396/05/03'
-        }
-      }
+export default {
+  data () {
+    return {
+      date: '1396/05/03'
     }
+  }
+}
 </script>

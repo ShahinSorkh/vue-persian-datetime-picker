@@ -27,11 +27,11 @@
 </template>
 
 <script>
-    export default {
-      data () {
-        return {
-          date: ''
-        }
-      }
+export default {
+  data () {
+    return {
+      date: ''
     }
+  }
+}
 </script>

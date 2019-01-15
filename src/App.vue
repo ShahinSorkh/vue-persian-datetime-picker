@@ -6,7 +6,6 @@
         <!--============ Installation ===========-->
         <install-docs></install-docs>
 
-
         <!--============ Demo ===========-->
         <hr>
         <h1>DEMO</h1>
@@ -17,6 +16,8 @@
         <simple-format></simple-format>
 
         <display-format></display-format>
+
+        <gregorian></gregorian>
 
         <disable-picker></disable-picker>
 
@@ -54,7 +55,6 @@
 
         <highlight></highlight>
 
-
         <!--===== DateTime Picker =====-->
         <h1 class="text-center hr">Datetime Picker</h1>
 
@@ -62,11 +62,12 @@
 
         <datetime-min-and-max></datetime-min-and-max>
 
-
         <!--===== Time Picker =====-->
         <h1 class="text-center hr">Time Picker</h1>
 
         <simple-time></simple-time>
+
+        <advance-time></advance-time>
 
         <time-min-and-max></time-min-and-max>
 
@@ -74,18 +75,17 @@
         <h1 class="text-center hr">Events</h1>
         <events-docs></events-docs>
 
-
         <!--============ Props ===========-->
         <h1 class="hr">Props</h1>
 
         <props-docs></props-docs>
 
-
     </div>
 </template>
 
 <script>
-    import InstallDocs from './components/InstallDocs.vue'
+
+import InstallDocs from './components/InstallDocs.vue'
 import SimpleDate from './components/examples/SimpleDate.vue'
 import SimpleFormat from './components/examples/SimpleFormat.vue'
 import MinAndMax from './components/examples/MinAndMax.vue'
@@ -103,6 +103,7 @@ import PickerColor from './components/examples/PickerColor.vue'
 import SimpleDatetime from './components/examples/SimpleDatetime.vue'
 import DatetimeMinAndMax from './components/examples/DatetimeMinAndMax.vue'
 import SimpleTime from './components/examples/SimpleTime.vue'
+import AdvanceTime from './components/examples/AdvanceTime.vue'
 import TimeMinAndMax from './components/examples/TimeMinAndMax.vue'
 import PropsDocs from './components/PropsDocs.vue'
 import EventsDocs from './components/EventsDocs.vue'
@@ -113,44 +114,47 @@ import DisablePicker from './components/examples/DisablePicker.vue'
 import DisableDates from './components/examples/DisableDates.vue'
 import WithLabel from './components/examples/WithLabel.vue'
 import Highlight from './components/examples/Highlight.vue'
+import Gregorian from './components/examples/Gregorian.vue'
 
 export default {
-      name: 'app',
-      data () {
-        return {}
-      },
-      methods: {},
-      components: {
-        InstallDocs,
-        SimpleDate,
-        SimpleFormat,
-        MinAndMax,
-        WithValue,
-        DifferentInputAnOutput,
-        ViewProp,
-        EditableInput,
-        CustomInput,
-        CustomInputAndEditable,
-        InputSettings,
-        AltField,
-        AutoSubmit,
-        WrapperSubmit,
-        PickerColor,
-        SimpleDatetime,
-        DatetimeMinAndMax,
-        SimpleTime,
-        TimeMinAndMax,
-        PropsDocs,
-        EventsDocs,
-        InitialValue,
-        DisplayFormat,
-        AppendTo,
-        DisablePicker,
-        DisableDates,
-        WithLabel,
-        Highlight
-      }
-    }
+  name: 'app',
+  data () {
+    return {}
+  },
+  methods: {},
+  components: {
+    InstallDocs,
+    SimpleDate,
+    SimpleFormat,
+    MinAndMax,
+    WithValue,
+    DifferentInputAnOutput,
+    ViewProp,
+    EditableInput,
+    CustomInput,
+    CustomInputAndEditable,
+    InputSettings,
+    AltField,
+    AutoSubmit,
+    WrapperSubmit,
+    PickerColor,
+    SimpleDatetime,
+    DatetimeMinAndMax,
+    SimpleTime,
+    AdvanceTime,
+    TimeMinAndMax,
+    PropsDocs,
+    EventsDocs,
+    InitialValue,
+    DisplayFormat,
+    AppendTo,
+    DisablePicker,
+    DisableDates,
+    WithLabel,
+    Highlight,
+    Gregorian
+  }
+}
 </script>
 
 <style lang="scss">
@@ -197,6 +201,10 @@ export default {
         label svg + span {
             margin-right: 0 !important;
             margin-left: 4px;
+        }
+        > i {
+            left: auto !important;
+            right: 0;
         }
     }
     .form-control {  border-radius: 0;  }

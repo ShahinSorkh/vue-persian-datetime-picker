@@ -55,7 +55,6 @@
             <date-picker initialValue="1397/05/01 22:15" type="datetime" placeholder="Array of strings and RegExp" :disable="['1397/05/06 12:00', /(.*)22:(.*)/]"></date-picker>
         </div>
 
-
         <template slot="code">
 
             <div class="btn-group mb-2">
@@ -162,34 +161,33 @@
                 </highlight-code>
             </template>
 
-
         </template>
     </card>
 </template>
 
 <script>
-    import moment from 'moment-jalaali'
+import moment from 'moment-jalaali'
 export default {
-      data () {
-        return {
-          tab: 'd',
-          buttons: {
-            y: 'Year',
-            m: 'Month',
-            d: 'Date',
-            t: 'Time',
-            dt: 'DateTime'
-          }
-        }
-      },
-      methods: {
-        checkDate (formatted, dateMoment, checkingFor) {
-          return (
-            formatted === '1397/04/03' ||
-                    dateMoment.jMonth() === 4 || // means "mordad"
-                    dateMoment.locale('en').format('dddd') === 'Friday'
-          )
-        }
+  data () {
+    return {
+      tab: 'd',
+      buttons: {
+        y: 'Year',
+        m: 'Month',
+        d: 'Date',
+        t: 'Time',
+        dt: 'DateTime'
       }
     }
+  },
+  methods: {
+    checkDate (formatted, dateMoment, checkingFor) {
+      return (
+        formatted === '1397/04/03' ||
+                    dateMoment.jMonth() === 4 || // means "mordad"
+                    dateMoment.locale('en').format('dddd') === 'Friday'
+      )
+    }
+  }
+}
 </script>

@@ -11,7 +11,6 @@
 
         <date-picker v-model="date" :color="colors[activeColorIndex]" :show="show" @close="show=false"></date-picker>
 
-
         <template slot="code">
             <highlight-code lang="html" v-pre>
                 &lt;span class="color-selector"
@@ -41,16 +40,16 @@
 </template>
 
 <script>
-    export default {
-      data () {
-        return {
-          date: '',
-          show: false,
-          colors: ['#5c6bc0', '#e91e63', '#7b1fa2', '#1e88e5', '#03a9f4', '#00acc1', '#ff9800', 'dimgray'],
-          activeColorIndex: 0
-        }
-      }
+export default {
+  data () {
+    return {
+      date: '',
+      show: false,
+      colors: ['#5c6bc0', '#e91e63', '#7b1fa2', '#1e88e5', '#03a9f4', '#00acc1', '#ff9800', 'dimgray'],
+      activeColorIndex: 0
     }
+  }
+}
 </script>
 
 <style scoped="">

@@ -1,7 +1,6 @@
 <template>
     <card title="Custom input element and editable">
 
-
         <button type="button" class="btn btn-primary" @click="show=true">Show Datepicker</button>
 
         <input type="text"
@@ -59,12 +58,12 @@
 </template>
 
 <script>
-    export default {
-      data () {
-        return {
-          date: '',
-          show: false
-        }
-      }
+export default {
+  data () {
+    return {
+      date: '',
+      show: false
     }
+  }
+}
 </script>

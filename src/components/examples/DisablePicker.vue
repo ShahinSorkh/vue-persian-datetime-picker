@@ -16,11 +16,11 @@
 </template>
 
 <script>
-    export default {
-      data () {
-        return {
-          disabled: true
-        }
-      }
+export default {
+  data () {
+    return {
+      disabled: true
     }
+  }
+}
 </script>
