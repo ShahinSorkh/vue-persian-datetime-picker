@@ -225,7 +225,7 @@
 </template>
 
 <script>
-import utils from './modules/utils'
+import { scrollTo, moment } from './modules/utils'
 import Arrow from './components/Arrow.vue'
 import Btn from './components/Btn.vue'
 import Icon from 'vue-awesome/components/Icon'
@@ -589,7 +589,7 @@ export default {
             if (container) {
               let top = container.querySelector('.selected')
               top = top ? top.offsetTop - 110 : 0
-              utils.scrollTo(container, top, 400)
+              scrollTo(container, top, 400)
             }
           }, 100)
         })
@@ -1085,7 +1085,7 @@ export default {
     this.setType()
     this.setView()
     setInterval(() => {
-      this.now = utils.moment()
+      this.now = moment()
     }, 1000)
   },
   mounted () {

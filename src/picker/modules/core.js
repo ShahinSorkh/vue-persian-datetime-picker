@@ -1,10 +1,8 @@
-import moment from 'moment-jalaali'
-import fa from './moment.locale.fa'
-import utils from './utils'
+import { moment, extend } from './utils'
 moment.updateLocale('en', {
   weekdaysMin: 'S_M_T_W_T_F_S'.split('_')
 })
-moment.updateLocale('fa', fa)
+moment.updateLocale('fa')
 moment.loadPersian({ dialect: 'persian-modern' })
 moment.daysInMonth = function (year, month) {
   return moment({ year, month }).daysInMonth()
@@ -78,7 +76,7 @@ const Core = function (defaultLocaleName) {
 
     options = options[localeName] || {}
     locale.name = localeName
-    locale.config = utils.extend(config, options)
+    locale.config = extend(config, options)
 
     xDaysInMonth = moment[methods.daysInMonth]
 

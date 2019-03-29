@@ -25,7 +25,7 @@
     "buildAll": "yarn build && yarn export && yarn browser"
   },
   "dependencies": {
-    "moment-jalaali": "^0.7.3",
+    "moment-jalaali": "^0.8.3",
     "vue-awesome": "^3.0.5"
   },
   "repository": {
